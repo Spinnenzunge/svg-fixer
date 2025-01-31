@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');
 const multer = require('multer');
 const fs = require('fs');
 const path = require('path');
@@ -7,9 +8,12 @@ const svgFixer = require('oslllo-svg-fixer');
 const app = express();
 const port = process.env.PORT || 3000;
 
-const upload = multer({ dest: 'uploads/' });
+// Enable CORS for all origins
+app.use(cors({
+    origin: 'https://spinnenzunge.github.io'
+}));
 
-app.use(express.static('public'));
+const upload = multer({ dest: 'uploads/' });
 
 app.post('/fix-svg', upload.single('file'), async (req, res) => {
     if (!req.file) {
