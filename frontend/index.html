@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SVG Fixer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            text-align: center;
+        }
+        #upload-form {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Upload SVG to Fix</h1>
+    <form id="upload-form">
+        <input type="file" id="file" accept="image/svg+xml" required>
+        <button type="submit">Upload</button>
+    </form>
+    <p id="status"></p>
+
+    <script>
+        document.getElementById('upload-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const fileInput = document.getElementById('file');
+            const statusText = document.getElementById('status');
+            
+            if (!fileInput.files.length) {
+                statusText.textContent = 'Please select a file.';
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+            
+            statusText.textContent = 'Uploading...';
+            
+            try {
+                const response = await fetch('https://svg-fixer.onrender.com/', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to process SVG');
+                }
+                
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'fixed.svg';
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                statusText.textContent = 'Download complete!';
+            } catch (error) {
+                statusText.textContent = 'Error: ' + error.message;
+            }
+        });
+    </script>
+</body>
+</html>
