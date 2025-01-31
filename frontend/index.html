@@ -44,7 +44,7 @@
             statusText.textContent = 'Uploading...';
             
             try {
-                const response = await fetch('https://svg-fixer.onrender.com/', {
+                const response = await fetch('https://svg-fixer.onrender.com/fix-svg', {
                     method: 'POST',
                     body: formData
                 });
